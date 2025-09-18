@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Bio Prompt — Windows CMD Style</title>
+<title>lerpypluh </title> — Lerpy Terminal</title>
 <style>
   :root{
     --bg:#0b0b0b;
@@ -77,7 +77,7 @@ Interests: UI/UX, game modding, design`,
   projects: `Projects:
  - Lunar.LOL custom mod menu
  - Portfolio site`,
-Discord: @lbani.`
+  contact: `Discord: @lbani.`
 };
 
 const historyEl = document.getElementById('history');
@@ -95,12 +95,29 @@ tabs.forEach(t=>{
   t.addEventListener('click', ()=>showSection(t.dataset.section));
 });
 
+function runCommand(cmd){
+  if(BIO_CONTENT[cmd]){
+    showSection(cmd);
+    return;
+  }
+  switch(cmd){
+    case "help":
+      bioBox.textContent = "Available commands:\nabout\nskills\nprojects\ncontact\nhelp\nclear";
+      break;
+    case "clear":
+      historyEl.textContent = "";
+      bioBox.textContent = "";
+      break;
+    default:
+      historyEl.textContent += `\n'${cmd}' is not recognized as an internal or external command.`;
+  }
+}
+
 cmdline.addEventListener('keydown', e=>{
   if(e.key==='Enter'){
     const cmd=cmdline.value.trim().toLowerCase();
     historyEl.textContent += `\nC:\\Users\\lerpyypluh> ${cmd}`;
-    if(BIO_CONTENT[cmd]) showSection(cmd);
-    else if(cmd) historyEl.textContent += `\n'${cmd}' is not recognized.`;
+    if(cmd) runCommand(cmd);
     cmdline.value='';
   }
 });

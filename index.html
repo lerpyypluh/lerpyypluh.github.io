@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Bio Prompt — Windows CMD Style</title>
+<style>
+  :root{
+    --bg:#0b0b0b;
+    --panel:#0f0f0f;
+    --text:#e6e6e6;
+    --muted:#9a9a9a;
+    --accent:#0a84ff;
+    --tab-bg:#1a1a1a;
+    --tab-active:#2c2c2c;
+    --caret:#e6e6e6;
+    --header:#151515;
+    font-family: "Consolas", "Courier New", monospace;
+  }
+  html,body{height:100%; margin:0; background:#050505; display:flex; align-items:center; justify-content:center; padding:24px; color:var(--text);}
+  .win { width: min(1000px,96vw); border-radius:6px; background:#0b0b0b; box-shadow: 0 16px 40px rgba(0,0,0,0.6); overflow:hidden; border:1px solid #111; }
+  .win-header{height:40px;background:#151515;display:flex;align-items:center;padding:4px 10px;gap:8px;color:var(--muted);}
+  .win-icon{width:18px;height:18px;border-radius:2px;background:#333;}
+  .win-title{flex:1;font-size:13px;}
+  .window-controls{display:flex;gap:6px}
+  .ctrl{width:34px;height:28px;display:flex;align-items:center;justify-content:center;color:var(--muted);}
+  .ctrl.close{background:#3b0000;color:#fff}
+  .term{background:var(--panel);padding:18px;min-height:420px;color:var(--text);font-size:15px;line-height:1.5;}
+  .prompt-line{display:flex;gap:8px;align-items:flex-start;}
+  .prompt-prefix{color:var(--muted);}
+  .prompt-input{flex:1;outline:none;border:none;background:transparent;color:var(--text);}
+  .caret{display:inline-block;width:9px;height:20px;background:var(--caret);margin-left:2px;animation:blink 1s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0}}
+  .output{white-space:pre-wrap;margin-top:12px;color:var(--muted);font-size:14px;}
+  .tabs{margin-top:12px;display:flex;gap:8px;}
+  .tab{background:var(--tab-bg);padding:6px 10px;border-radius:4px;cursor:pointer;font-size:13px;color:var(--muted);}
+  .tab.active{background:var(--tab-active);color:var(--text);}
+  .bio-box{margin-top:14px;padding:12px;background:#0c0c0c;border-radius:4px;font-size:14px;color:var(--muted);white-space:pre-wrap;}
+</style>
+</head>
+<body>
+  <div class="win">
+    <div class="win-header">
+      <div class="win-icon"></div>
+      <div class="win-title">C:\Windows\System32\cmd.exe</div>
+      <div class="window-controls">
+        <div class="ctrl">─</div>
+        <div class="ctrl">◻</div>
+        <div class="ctrl close">✕</div>
+      </div>
+    </div>
+    <div class="term" id="terminal">
+      <div id="history" class="output"></div>
+      <div class="tabs" id="tabs">
+        <button class="tab active" data-section="about">About</button>
+        <button class="tab" data-section="skills">Skills</button>
+        <button class="tab" data-section="projects">Projects</button>
+        <button class="tab" data-section="contact">Contact</button>
+      </div>
+      <div id="bio" class="bio-box"></div>
+      <div style="margin-top:14px;">
+        <div class="prompt-line">
+          <div class="prompt-prefix" id="prefix">C:\Users\lerpyypluh&gt;</div>
+          <input id="cmdline" class="prompt-input" autocomplete="off" spellcheck="false" />
+          <span class="caret"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const BIO_CONTENT = {
+  about: `Name: lerpyypluh
+Summary: Developer and hobbyist who enjoys playful UIs and creative projects.`,
+  skills: `Languages: HTML, CSS, C#
+Interests: UI/UX, game modding, design`,
+  projects: `Projects:
+ - Lunar.LOL custom mod menu
+ - Portfolio site`,
+Discord: @lbani.`
+};
+
+const historyEl = document.getElementById('history');
+const cmdline = document.getElementById('cmdline');
+const bioBox = document.getElementById('bio');
+const tabs = Array.from(document.querySelectorAll('.tab'));
+
+function showSection(name){
+  bioBox.textContent = BIO_CONTENT[name] || '';
+  tabs.forEach(t=>t.classList.toggle('active', t.dataset.section===name));
+}
+showSection('about');
+
+tabs.forEach(t=>{
+  t.addEventListener('click', ()=>showSection(t.dataset.section));
+});
+
+cmdline.addEventListener('keydown', e=>{
+  if(e.key==='Enter'){
+    const cmd=cmdline.value.trim().toLowerCase();
+    historyEl.textContent += `\nC:\\Users\\lerpyypluh> ${cmd}`;
+    if(BIO_CONTENT[cmd]) showSection(cmd);
+    else if(cmd) historyEl.textContent += `\n'${cmd}' is not recognized.`;
+    cmdline.value='';
+  }
+});
+</script>
+</body>
+</html>
